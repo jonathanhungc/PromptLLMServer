@@ -3,40 +3,38 @@
 
 #### UIC email: jhung9@uic.edu
 
-This is a program to train a neural network for text sequence prediction using Spark and its distributed computing
-capabilities. In the /resources directory, you can find different input text files that I used for testing and
-training the model locally, as well as files that contain the vector embeddings for all the words present in the
-input files. So, the important files and directories are:
+This program provides a RESTul service for LLM interactions. The framework used is Finch/Finagle. The client sends a GET
+request to this server, the server sends a POST request to an Amazon API Gateway integrated with a Lambda Function in AWS.
+The workflow is the following: 
 
-- **src/main/scala/SlidingWindowTraining.scala**: This file contains all the logic for the program. This file holds the
-code that reads a directory of .txt files, split all the text into sentences of a fixed number of words, computes
-sliding windows with their corresponding targets over each sentence and stores them in RDDs, takes the windows and their
-targets and feeds them as vector representations (a 3D tensor and a 2D tensor, respectively) to a neural network for
-sequence prediction, and finally saves the model.
-- **src/main/resources**: Holds all the input data for the program. The directory /input has a few .txt files, small
-amount of data, and its corresponding file with vector embeddings is word-vectors.txt. Likewise, /input-large has 2 .txt
-files (around 4MB) and its corresponding vector embedding file is word-vectors-medium.txt. The input directories hold
-training text, while the word vectors files hold vector embeddings.
-- **src/test/scala/Test.scala**: This file has all the tests for the functions used in the main file
-(SlidingWindowTraining.scala). It tests that the functions used for splitting and transforming the data work correctly,
-and that they provide the expected format for training. It also tests that the SparkContext and neural network are
-created correctly. For the scala tests to run correctly, the specified variables 
+1. The client makes a GET request to the Finch server
+2. The server serializes the client request in a Protobuf object as part of the POST request
+3. Sends the POST request to the API Gateway integrated with the lambda function
+4. The Lambda Function deserializes the request to get the client input
+5. Uses this input to make calls to Amazon Bedrock and generate a response to the input
+6. Serializes the response from the model into a Protobuf object
+7. Sends a response to the Finch server
+8. The server deserializes this Protobuf object to extract the text response from Amazon Bedrock
+9. Sends an OK response to the client with the response from Amazon Bedrock
+
+These are the relevant files for the project:
+
+- **src/main/scala/Protobuf.scala**: 
+- **src/main/protobuf/user.proto**: This file contains the structure for the Protobuf object used for serialization. The
+program generates the required .scala files and classes from this .proto file.
+- **src/main/resources/application.conf**: This file sets different variables in the program.
+- **src/test/scala/ProtobufClientTest.scala**:
 - **build.sbt**: This file has all the dependencies of the program, including Apache Spark, DeepLearning4j, etc.
-- **src/main/resources/application.conf**: This file sets different variables in the program, according  to the input data.
-There's one configuration for the Scala tests, and one for the actual extensive testing.
-- **Input**: A directory with .txt files with sentences, and a .txt file with the vector embeddings of each word
-- **Output**: A NN model saved by the program after training, and a training-stats.txt file with the stats of the training
-- The input and output paths must be given when executing the program, and the variables in application.conf must be set
-according to the input. For instance, in the below running commands the program will run with around 4MB of data. The
-input directory in this case is src/main/resources/input-medium, and the word vector embeddings file for this directory 
-is src/main/resources/word-vectors-medium.txt. After execution, the NN model will be saved to src/main/resources/model.zip
-and a file with the stats of training will be written to src/main/resources/training-stats.txt.
-### To run the program execute the following commands (you may want to delete the src/main/resources/output directory before running this):
+
+### To run the program execute the following commands. This will start the server:
 ```
 sbt clean
 sbt compile
-sbt "run src/main/resources/word-vectors-medium.txt src/main/resources/input-medium src/main/resources/model.zip src/main/resources/training-stats.txt"
-
+sbt run
+```
+### In another terminal, you can run this to test the server. The input text needs to use URL encoding to work properly:
+```
+curl "http://localhost:8081/generate?input=What%20is%20cloud%20computing%3F"
 ```
 
-### The video of the deployment on Amazon EMR (Elastic Map Reduce) is found [here](https://youtu.be/A7zg2CNXHAk)
+### The video of the deployment on AWS is found [here](https://youtu.be/A7zg2CNXHAk)

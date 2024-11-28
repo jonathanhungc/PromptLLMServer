@@ -23,10 +23,14 @@ object ProtobufClient {
   private val log = LoggerFactory.getLogger(getClass)
   private val config = ConfigFactory.load()
 
-  def main(args: Array[String]): Unit = {
+  // This is the GET request endpoint for the server used to call the lambda function
+  val LLMlambda: Endpoint[String] = get("generate" :: param("input")) { (input: String) =>
 
-    // This is the GET request endpoint for the server used to call the lambda function
-    val LLMlambda: Endpoint[String] = get("generate" :: param("input")) { (input: String) =>
+    if (input.trim.isEmpty) {
+      // Handle empty input by returning a BadRequest with an appropriate message
+      log.warn("Received empty input from user")
+      BadRequest(new Exception("Input cannot be empty"))
+    } else {
 
       log.info("Input from user: " + input)
 
@@ -37,7 +41,7 @@ object ProtobufClient {
 
       // Send the POST request to API Gateway with request
       val response = scalaj.http.Http("https://ghfng1llqj.execute-api.us-east-1.amazonaws.com/dev/protobuf")
-        .timeout(connTimeoutMs = config.getInt("app.connTimeout"), readTimeoutMs = config.getInt("app.readTimeout"))  // Specify timeouts for connections and responses
+        .timeout(connTimeoutMs = config.getInt("app.connTimeout"), readTimeoutMs = config.getInt("app.readTimeout")) // Specify timeouts for connections and responses
         .postData(serializedRequest)
         .header("Content-Type", "application/x-protobuf")
         .header("Accept", "application/x-protobuf")
@@ -51,6 +55,9 @@ object ProtobufClient {
       // Send OK response with text from the lambda function
       Ok(userResponse)
     }
+  }
+
+  def main(args: Array[String]): Unit = {
 
     // Set the endpoint for the API
     val api = LLMlambda
