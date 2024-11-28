@@ -15,6 +15,10 @@ assembly / assemblyMergeStrategy := {
   case _ => MergeStrategy.first
 }
 
+Compile / PB.targets := Seq(
+  scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
+)
+
 lazy val root = (project in file("."))
   .settings(
     name := "homework3",
@@ -28,16 +32,18 @@ lazy val root = (project in file("."))
 
       "org.scalatest" %% "scalatest" % "3.2.19" % "test",
 
-      "org.deeplearning4j" % "deeplearning4j-core" % "1.0.0-M2.1",
-      "org.deeplearning4j" % "deeplearning4j-ui-model" % "1.0.0-M2.1",
-      "org.deeplearning4j" % "deeplearning4j-nlp" % "1.0.0-M2.1",
-
-      "org.nd4j" % "nd4j-native-platform" % "1.0.0-M2.1",
-
       "org.slf4j" % "slf4j-api" % "2.0.16",
 
       "ch.qos.logback" % "logback-classic" % "1.5.6",
 
       "com.typesafe" % "config" % "1.4.3",
+
+      "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
+
+      "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion,
+
+      "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,
+
+      "org.scalaj" %% "scalaj-http" % "2.4.2"
     )
   )

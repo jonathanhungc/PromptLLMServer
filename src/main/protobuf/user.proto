@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message UserRequest {
+  string user_input = 1;
+}
+
+message UserResponse {
+  string result = 1;
+}
