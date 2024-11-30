@@ -24,11 +24,13 @@ to take input from clients, serializes/deserializes Protobuf data, and interacts
 the Lambda function that uses Amazon Bedrock to generate responses.
 - **src/main/protobuf/user.proto**: This file contains the structure for the Protobuf object used for serialization. The
 program generates the required .scala files and classes from this .proto file.
+- **lambda-code/**: This directory contains the python files used in the lambda function in AWS. It has the file for the
+text generation using Amazon Bedrock, and the file generated from user.proto after compiling it for python.
 - **src/main/resources/application.conf**: This file sets different variables in the program.
 - **src/test/scala/ProtobufClientTest.scala**: This file contains some test cases for the Finch server. Make sure that
 the server is running at localhost:8081 before running the test file.
 - **build.sbt**: This file has all the dependencies of the program, including Finch, ScalaPB, etc.
-- 
+
 ### To run the program execute the following commands. This will start the server:
 ```
 sbt clean
