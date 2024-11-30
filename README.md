@@ -40,4 +40,4 @@ sbt run
 curl "http://localhost:8081/generate?input=What%20is%20cloud%20computing%3F"
 ```
 
-### The video of the deployment on AWS is found [here](https://youtu.be/A7zg2CNXHAk)
+### The video of the deployment on AWS is found [here](https://youtu.be/0X_eOAowDNo). The server is running in an EC2 instance.
