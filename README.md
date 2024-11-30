@@ -19,13 +19,16 @@ The workflow is the following:
 
 These are the relevant files for the project:
 
-- **src/main/scala/Protobuf.scala**: 
+- **src/main/scala/ProtobufClient.scala**: This file contains the code for the Finch server. It provides a GET endpoint
+to take input from clients, serializes/deserializes Protobuf data, and interacts with the API Gateway integrated with
+the Lambda function that uses Amazon Bedrock to generate responses.
 - **src/main/protobuf/user.proto**: This file contains the structure for the Protobuf object used for serialization. The
 program generates the required .scala files and classes from this .proto file.
 - **src/main/resources/application.conf**: This file sets different variables in the program.
-- **src/test/scala/ProtobufClientTest.scala**:
-- **build.sbt**: This file has all the dependencies of the program, including Apache Spark, DeepLearning4j, etc.
-
+- **src/test/scala/ProtobufClientTest.scala**: This file contains some test cases for the Finch server. Make sure that
+the server is running at localhost:8081 before running the test file.
+- **build.sbt**: This file has all the dependencies of the program, including Finch, ScalaPB, etc.
+- 
 ### To run the program execute the following commands. This will start the server:
 ```
 sbt clean

@@ -11,7 +11,6 @@ assembly / assemblyMergeStrategy := {
     }
   case "reference.conf" => MergeStrategy.concat
   case x if x.endsWith(".proto") => MergeStrategy.rename
-  case x if x.contains("hadoop") => MergeStrategy.first
   case _ => MergeStrategy.first
 }
 
@@ -22,8 +21,8 @@ Compile / PB.targets := Seq(
 lazy val root = (project in file("."))
   .settings(
     name := "homework3",
-    assembly / mainClass := Some("SlidingWindowTraining"),
-    assembly / assemblyJarName := "sliding-window-training-small-data.jar",
+    assembly / mainClass := Some("ProtobufClient"),
+    assembly / assemblyJarName := "protobuf-client.jar",
 
     libraryDependencies ++= Seq(
       "com.github.finagle" %% "finch-core" % "0.31.0",
