@@ -1,4 +1,4 @@
-# Homework 3:
+# Homework 3: LLM Server For Prompt Generation
 ### Name: Jonathan Hung
 
 #### UIC email: jhung9@uic.edu
